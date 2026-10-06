@@ -1,0 +1,44 @@
+diff --git a/dist/src/createPrintf.js b/dist/src/createPrintf.js
+index d190ecc874632c9bfc8e69853f6d0704983c3524..cbb7ac89f6129398a8850a6b3aa750a296a21f54 100644
+--- a/dist/src/createPrintf.js
++++ b/dist/src/createPrintf.js
+@@ -27,7 +27,7 @@ const createPrintf = (configuration) => {
+         }
+     };
+     const formatUnboundExpression = (_a = configuration === null || configuration === void 0 ? void 0 : configuration.formatUnboundExpression) !== null && _a !== void 0 ? _a : formatDefaultUnboundExpression;
+-    const cache = {};
++    const cache = Object.create(null);
+     // eslint-disable-next-line complexity
+     return (subject, ...boundValues) => {
+         let tokens = cache[subject];
+@@ -41,6 +41,10 @@ const createPrintf = (configuration) => {
+             }
+             else {
+                 let boundValue = boundValues[token.position];
++                if (token.width !== null && (!Number.isInteger(token.width) || token.width < 0 || token.width > 10000)) {
++                    result += '[invalid numeric width]';
++                    continue;
++                }
+                 if (boundValue === undefined) {
+                     result += formatUnboundExpression(subject, token, boundValues);
+                 }
+@@ -72,9 +76,17 @@ const createPrintf = (configuration) => {
+                         .toExponential()
+                         .toUpperCase();
+                 }
+-                else if (token.conversion === 'f') {
++                else if (token.conversion === 'f' || token.conversion === 'g') {
+                     if (token.precision !== null) {
+-                        boundValue = Number(boundValue).toFixed(token.precision);
++                        // Invalid numeric precision must not abort a logging operation.
++                        // Emit an explicit diagnostic instead of silently clamping input.
++                        if (!Number.isInteger(token.precision) || token.precision < (token.conversion === 'g' ? 1 : 0) || token.precision > 100) {
++                            result += '[invalid numeric precision]';
++                            continue;
++                        }
++                        boundValue = token.conversion === 'g'
++                            ? Number(boundValue).toPrecision(token.precision)
++                            : Number(boundValue).toFixed(token.precision);
+                     }
+                     if (token.width !== null) {
+                         boundValue = padValue(String(boundValue), token.width, token.flag);

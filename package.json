@@ -86,11 +86,17 @@
     "xterm-addon-fit": "^0.8.0"
   },
   "overrides": {
-    "adm-zip": "^0.6.0",
-    "ip-address": "10.3.1",
-    "sharp": "0.35.0"
+    "adm-zip": "0.6.1",
+    "fast-uri": "3.1.8",
+    "fast-printf": "1.6.10",
+    "hono": "4.13.7",
+    "ip-address": "10.7.1",
+    "proxy-addr": "2.0.8",
+    "roarr": "3.3.0",
+    "sharp": "0.35.4"
   },
   "patchedDependencies": {
-    "playwright-core@1.62.1": "patches/playwright-core@1.62.1.patch"
+    "playwright-core@1.62.1": "patches/playwright-core@1.62.1.patch",
+    "fast-printf@1.6.10": "patches/fast-printf@1.6.10.patch"
   }
 }

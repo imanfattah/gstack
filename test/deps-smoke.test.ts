@@ -26,13 +26,13 @@ describe("dependency-wave smoke", () => {
     expect(outMeta.width).toBe(4);
   });
 
-  test("ip-address 10.3.1 override: both nested consumers resolve the fixed version", async () => {
+  test("ip-address 10.7.1 override: both nested consumers resolve the fixed version", async () => {
     const lock = await Bun.file(`${import.meta.dir}/../bun.lock`).text();
     // No vulnerable ip-address node may survive anywhere in the tree
     // (socks pulled 10.2.0; express-rate-limit exact-pinned 10.1.0 — the
     // override must defeat both).
-    expect(lock).not.toMatch(/ip-address@10\.(1|2)\./);
-    expect(lock).toMatch(/ip-address@10\.3\./);
+    expect(lock).not.toMatch(/ip-address@10\.[0-6]\./);
+    expect(lock).toMatch(/ip-address@10\.7\.1/);
   });
 
   test("marked stays importable and parses (direct-dep bump)", async () => {
